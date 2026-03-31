@@ -30,10 +30,14 @@ public class InfractorController {
     public ResponseEntity<List<InfractorResponseDTO>> obtenerTodos() {
         return ResponseEntity.ok(infractorService.obtenerTodos());
     }
+    @DeleteMapping("/{infractorId}/vehiculos/{vehiculoId}")
+    public ResponseEntity<Void> desasignarVehiculo(
+            @PathVariable Long infractorId,
+            @PathVariable Long vehiculoId) {
 
-    @PostMapping("/{infractorId}/vehiculos/{vehiculoId}")
-    public ResponseEntity<Void> asignarVehiculo(@PathVariable Long infractorId, @PathVariable Long vehiculoId) {
-        infractorService.asignarVehiculo(infractorId, vehiculoId);
-        return ResponseEntity.ok().build();
+        infractorService.desasignarVehiculo(infractorId, vehiculoId);
+        return ResponseEntity.noContent().build();
     }
+
+
 }

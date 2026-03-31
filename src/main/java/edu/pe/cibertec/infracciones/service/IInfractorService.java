@@ -8,6 +8,8 @@ public interface IInfractorService {
     InfractorResponseDTO registrarInfractor(InfractorRequestDTO dto);
     InfractorResponseDTO obtenerInfractorPorId(Long id);
     List<InfractorResponseDTO> obtenerTodos();
-    void asignarVehiculo(Long infractorId, Long vehiculoId);
+    void desasignarVehiculo(Long infractorId, Long vehiculoId);
+    double calcularDeuda(Long infractorId);
+
 
 }

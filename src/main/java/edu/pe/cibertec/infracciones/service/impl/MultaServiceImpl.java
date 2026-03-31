@@ -110,4 +110,45 @@ public class MultaServiceImpl implements IMultaService {
                 .toList());
         return dto;
     }
+
+    @Override
+    public void transferirMulta(Long multaId, Long nuevoInfractorId) {
+
+        // 1. Buscar multa
+        Multa multa = multaRepository.findById(multaId)
+                .orElseThrow(() -> new RuntimeException("Multa no encontrada"));
+
+        // 2. Validar que esté PENDIENTE
+        if (multa.getEstado() != EstadoMulta.PENDIENTE) {
+            throw new RuntimeException("Solo se pueden transferir multas pendientes");
+        }
+
+        // 3. Buscar nuevo infractor
+        Infractor nuevoInfractor = infractorRepository.findById(nuevoInfractorId)
+                .orElseThrow(() -> new RuntimeException("Infractor no encontrado"));
+
+        // 4. Validar que no esté bloqueado
+        if (nuevoInfractor.isBloqueado()) {
+            throw new InfractorBloqueadoException(nuevoInfractorId);
+        }
+
+        // 5. Validar que tenga el vehículo de la multa
+        Long vehiculoId = multa.getVehiculo().getId();
+
+        boolean tieneVehiculo = nuevoInfractor.getVehiculos()
+                .stream()
+                .anyMatch(v -> v.getId().equals(vehiculoId));
+
+        if (!tieneVehiculo) {
+            throw new RuntimeException("El infractor no tiene el vehículo de la multa");
+        }
+
+        // 6. Transferir multa
+        multa.setInfractor(nuevoInfractor);
+
+        // 7. Guardar
+        multaRepository.save(multa);
+    }
+
+
 }
